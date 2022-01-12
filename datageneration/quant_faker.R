@@ -1,3 +1,6 @@
+seed = 42
+set.seed(seed)
+
 count_total_participants = 40
 count_copilot_participants = count_total_participants / 2
 count_copilot_advanced_participants = floor( count_copilot_participants / 2.5)
