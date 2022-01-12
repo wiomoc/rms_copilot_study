@@ -1,0 +1,57 @@
+# see https://blog--simonpcouch.netlify.app/blog/r-github-actions-commit/ as reference
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+
+jobs:
+  build_data:  
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE
+     - uses: actions/checkout@v2
+
+      # Creates R setup
+     - uses: r-lib/actions/setup-r@master
+       with:
+         r-version: 4.1.2
+ 
+     - uses: r-lib/actions/setup-pandoc@master
+ 
+#      Query dependencies. Currently this is not needed.
+#      - name: Query dependencies
+#        run: |
+#          install.packages('remotes')
+#          install.packages('sessioninfo')
+#          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+#          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+#        shell: Rscript {0}
+ 
+#      - name: Cache R packages
+#        uses: actions/cache@v1
+#        with:
+#          path: ${{ env.R_LIBS_USER }}
+#          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+#          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+ 
+#      - name: Install dependencies
+#        run: |
+#          remotes::install_deps(dependencies = TRUE)
+#        shell: Rscript {0}
+       
+     - name: Run Data Genation Script       
+       shell: sh
+       run: | 
+          cd ./datageneration && ./create_data.sh
+
+     - uses: actions/upload-artifact@v2
+       with:
+         name: data
+         path: ./datageneration/output_data.csv
