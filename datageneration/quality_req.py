@@ -8,7 +8,7 @@ import scipy.stats as stats
 
 plot_enabled = False
 
-number_of_participants = 1000
+number_of_participants = 0
 scale = range(1, 5)
 seed = 42
 
@@ -97,7 +97,6 @@ def createBinaryDistributionValues(mean):
 
 
 @half_participants
-@shuffle
 def statistics_for_split_group(mean_nopilot, std_nopilot, mean_pilot, std_pilot, min_value=1, max_value=5):
     pilot = createSkwedNormalDistributionValues(
         mean_pilot, skew=0, std=std_pilot, min_value=min_value, max_value=max_value)
@@ -155,25 +154,56 @@ def feel_comfortable_working_with_library():
 def main():
     global plot_enabled
     plot_enabled = False
+    
+    global number_of_participants
+    
 
-    data1 = experience_in_years()
-    data2 = experience_in_python_3()
+    basedata = pd.read_csv('quant_data.csv', index_col=0, header=0, sep=',')  
+    basedata.index.name="participant"
+
+    basedata.sort_values(by=["skill_level"], inplace=True)
+    skill_counts = basedata["skill_level"].value_counts()
+    number_of_participants = skill_counts.adv
+    exp_in_years_adv = createSkwedNormalDistributionValues(7,0, 3, 3, 15)
+    exp_in_python_adv = createSkwedNormalDistributionValues(5,0, 2, 3, 15)
+    
+    for i in range(len(exp_in_years_adv)): # remove anomalies
+        if(exp_in_years_adv[i] < exp_in_python_adv[i]):
+            exp_in_years_adv[i] = exp_in_python_adv[i]
+
+    number_of_participants = skill_counts.beg
+    exp_in_years_beg = createSkwedNormalDistributionValues(3,0, 2, 1, 4)
+    exp_in_python_beg = createSkwedNormalDistributionValues(1,0, 2, 0, 3)
+    
+    for i in range(len(exp_in_years_beg)): # remove anomalies
+        if(exp_in_years_beg[i] < exp_in_python_beg[i]):
+            exp_in_years_beg[i] = exp_in_python_beg[i]
+    
+    exp_in_years = exp_in_years_adv + exp_in_years_beg
+    exp_in_python = exp_in_python_adv + exp_in_python_beg
+    
+    basedata["experience_in_years"] = exp_in_years
+    basedata["experience_in_python"] = exp_in_python
+    
+    
+    number_of_participants = len(basedata)
     data3 = tried_github_copilot()
     data4 = used_ai_coding_aids()
+    basedata["tried_github_copilot"] = data3
+    basedata["used_ai_coding_aids"] = data4
 
+    basedata.sort_values(by=["used_copilot"], inplace=True)
     data5 = suggestions_were_useful()
     data6 = understand_written_code()
     data7 = repetitive_tasks_were_not_tedious()
-    data8 = feel_comfortable_working_with_library()
-
-    output(experience_in_year=data1,
-           experience_in_python_3=data2,
-           tried_github_copilot=data3,
-           used_ai_coding_aids=data4,
-           suggestions_were_useful=data5, 
-           understand_written_code=data6,
-           repetitive_tasks_were_not_tedious=data7,
-           feel_comfortable_working_with_library=data8)
+    data8 = feel_comfortable_working_with_library()    
+    basedata["suggestions_were_useful"] = data5
+    basedata["understand_written_code"] = data6
+    basedata["repetitive_tasks_were_not_tedious"] = data7
+    basedata["feel_comfortable_working_with_library"] = data8
+    
+    basedata.sort_values(by=["participant"], inplace=True)
+    basedata.to_csv('output_data.csv', sep=',',na_rep="N/A")
 
 
 def output(**data):
@@ -182,9 +212,9 @@ def output(**data):
     df.index += 1
     df.index.name="participant"
     # generate a csv file with the data
-    df.to_csv('quality_req_data.csv')
+    df.to_csv('quality_data.csv')
     # generate a txt file with the data
-    with open('quality_req_data.txt', 'w') as f:
+    with open('quality_data.txt', 'w') as f:
         for line in df.to_string(index=False, header=False):
             f.write(line)
 
