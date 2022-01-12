@@ -41,12 +41,12 @@ jobs:
 #          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
 #          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
  
-#      - name: Install dependencies
-#        run: |
-#          remotes::install_deps(dependencies = TRUE)
-#        shell: Rscript {0}
+     - name: Install dependencies
+       run: |
+        Rscript -e 'install.packages("optparse", repos="https://cloud.r-project.org")'
+        python -m pip install -r datageneration/requirements.txt
        
-     - name: Run Data Genation Script       
+     - name: Run Data Generation Script       
        shell: sh
        run: | 
           cd ./datageneration && ./create_data.sh

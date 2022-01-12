@@ -5,13 +5,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
+from optparse import OptionParser
 
-plot_enabled = False
+parser = OptionParser()
+parser.add_option("-s", "--seed",default=42, type="int",
+                  help="seed of the generator")
+                  
+parser.add_option("-p", "--plot_enabled", default=False)
+                  
+(options, args) = parser.parse_args()
+
+plot_enabled = options.plot_enabled
 
 number_of_participants = 0
 scale = range(1, 5)
-seed = 42
-
+seed = options.seed
 
 random.seed(seed)
 np.random.seed(seed)

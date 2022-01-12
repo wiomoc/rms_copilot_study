@@ -1,5 +1,14 @@
-seed = 42
-set.seed(seed)
+#!/usr/bin/env Rscript
+
+library("optparse")
+option_list = list(
+  make_option(c("-s", "--seed"), type="integer", default=42, 
+              help="seed of the generator", metavar="character")
+); 
+
+opt_parser = OptionParser(option_list=option_list);
+opt = parse_args(opt_parser);
+set.seed(opt$seed)
 
 count_total_participants = 40
 count_copilot_participants = count_total_participants / 2
