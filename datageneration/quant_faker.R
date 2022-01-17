@@ -3,14 +3,16 @@
 library("optparse")
 option_list = list(
   make_option(c("-s", "--seed"), type="integer", default=42, 
-              help="seed of the generator", metavar="character")
+              help="seed of the generator", metavar="character"),
+  make_option(c("-n", "--n_samples"), type="integer", default=40, 
+              help="number of samples", metavar="character")
 ); 
 
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 set.seed(opt$seed)
 
-count_total_participants = 40
+count_total_participants = opt$n_samples
 count_copilot_participants = count_total_participants / 2
 count_copilot_advanced_participants = floor( count_copilot_participants / 2.5)
 count_copilot_beginner_participants = count_copilot_participants - count_copilot_advanced_participants
