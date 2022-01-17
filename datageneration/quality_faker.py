@@ -10,6 +10,8 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("-s", "--seed",default=42, type="int",
                   help="seed of the generator")
+parser.add_option("-n", "--number_of_participants",default=40, type="int",
+                  help="number of participants")
                   
 parser.add_option("-p", "--plot_enabled", default=False)
                   
@@ -17,7 +19,7 @@ parser.add_option("-p", "--plot_enabled", default=False)
 
 plot_enabled = options.plot_enabled
 
-number_of_participants = 0
+number_of_participants = options.number_of_participants
 scale = range(1, 5)
 seed = options.seed
 
