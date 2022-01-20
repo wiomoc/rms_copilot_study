@@ -1,29 +1,70 @@
 #!/usr/bin/env Rscript
 
 library("optparse")
+library("sn")
+library("distr")
+library("plyr")
+
 option_list = list(
-  make_option(c("-s", "--seed"), type="integer", default=42, 
+  make_option(c("-s", "--seed"), type="integer", default=42,
               help="seed of the generator", metavar="character"),
-  make_option(c("-n", "--n_samples"), type="integer", default=40, 
+  make_option(c("-n", "--n_samples"), type="integer", default=40,
               help="number of samples", metavar="character")
-); 
+);
 
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 set.seed(opt$seed)
 
 count_total_participants = opt$n_samples
-count_copilot_participants = count_total_participants / 2
-count_copilot_advanced_participants = floor( count_copilot_participants / 2.5)
-count_copilot_beginner_participants = count_copilot_participants - count_copilot_advanced_participants
-
-count_normal_participants = count_total_participants - count_copilot_participants
-count_normal_advanced_participants = floor(count_normal_participants / 1.6)
-count_normal_beginner_participants = count_normal_participants - count_normal_advanced_participants
 
 
-skill_level <- c()
-used_copilot <- c()
+is_experienced <- function(programming_skill_individual,python_skill_individual) {
+  return(programming_skill_individual > 5 ||  python_skill_individual >3)
+}
+
+max_years = 10
+
+#scale => larger = flatter, shape => moves peak
+programming_skill_generator<-Truncate(Weibull(scale=4,shape=2),lower=0,upper=max_years)
+programing_skills <- ceiling(programming_skill_generator@r(count_total_participants))
+
+
+generators <- c()
+for (i in 1:max_years){
+  gen <- Truncate(Exp(rate=0.25),lower=0, i)
+  generators <<- c(generators, gen )
+}
+
+get_python_exp <- function(programming_year){
+
+  python_skill <- 0
+  if (programming_year > 0) {
+    python_skill_generator <- generators[[programming_year]]
+    python_skill <- ceiling(python_skill_generator@r(1))
+  }
+  return(python_skill)
+}
+
+
+python_skills <- c()
+counts_as_experienced<- c()
+for (years in programing_skills) {
+  python_year<- get_python_exp(years)
+  python_skills <-c(python_skills,python_year)
+  counts_as_experienced <- c(counts_as_experienced, is_experienced(years,python_year))
+}
+
+used_copilot <- logical(count_total_participants)#pre-allocate for performance
+for (i in 1:count_total_participants){
+  used_copilot[i-1] <- (i >count_total_participants/2)
+}
+
+setClass("Participant",slots=list(skill="numeric",python_skill="numeric",counts_as_experienced="logical",used_copilot="logical"))
+
+
+
+participants <- c()
 task_0_sub_0_valid <- c()
 task_0_sub_1_valid <- c()
 task_0_sub_2_valid <- c()
@@ -40,163 +81,190 @@ task_3_time <- c()
 task_3_valid <- c()
 
 
-for (i in 1:count_copilot_advanced_participants) {
-  skill_level <- c(skill_level, "adv")
-  used_copilot <- c(used_copilot, TRUE)
-  task_0_sub_0_valid <- c(task_0_sub_0_valid, TRUE)
-  task_0_sub_1_valid <- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.95,.05)))
-  task_0_sub_2_valid <- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
-  task_0_time <- c(task_0_time, rnorm(1, mean=71, sd=12))
-  
+
+data_point_copilot_experienced <- function(){
+  task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)
+  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.95,.05)))
+  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=71, sd=12))
+
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.8, .2))
-  task_1_valid <- c(task_1_valid, task_1_valid_)
+  task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <- c(task_1_time, rnorm(1, mean=610, sd=90))
-    task_1_complexity <- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=610, sd=90))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
   } else {
-    task_1_time <- c(task_1_time, NaN)
-    task_1_complexity <- c(task_1_complexity, NaN)
+    task_1_time <<- c(task_1_time, NaN)
+    task_1_complexity <<- c(task_1_complexity, NaN)
   }
-  
+
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
-  task_2_valid <- c(task_2_valid, task_2_valid_)
+  task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <- c(task_2_time, rnorm(1, mean=590, sd=50))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=590, sd=50))
   } else {
-    task_2_time <- c(task_2_time, NaN)
+    task_2_time <<- c(task_2_time, NaN)
   }
-  
+
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.94, .06))
-  task_3_valid <- c(task_3_valid, task_3_valid_)
+  task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_3_valid_) {
-    task_3_time <- c(task_3_time, rnorm(1, mean=310, sd=40))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=310, sd=40))
   } else {
-    task_3_time <- c(task_3_time, NaN)
+    task_3_time <<- c(task_3_time, NaN)
   }
 }
 
-for (i in 1:count_copilot_beginner_participants) {
-  skill_level <- c(skill_level, "beg")
-  used_copilot <- c(used_copilot, TRUE)
-  task_0_sub_0_valid <- c(task_0_sub_0_valid, TRUE)
-  task_0_sub_1_valid <- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.93,.07)))
-  task_0_sub_2_valid <- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.89,.11)))
-  task_0_time <- c(task_0_time, rnorm(1, mean=82, sd=15))
-  
+data_point_copilot_beginner <- function(){
+  task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)
+  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.93,.07)))
+  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.89,.11)))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=82, sd=15))
+
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.72, .28))
-  task_1_valid <- c(task_1_valid, task_1_valid_)
+  task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <- c(task_1_time, rnorm(1, mean=700, sd=80))
-    task_1_complexity <- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=700, sd=80))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
   } else {
-    task_1_time <- c(task_1_time, NaN)
-    task_1_complexity <- c(task_1_complexity, NaN)
+    task_1_time <<- c(task_1_time, NaN)
+    task_1_complexity <<- c(task_1_complexity, NaN)
   }
-  
+
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.91, .09))
-  task_2_valid <- c(task_2_valid, task_2_valid_)
+  task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <- c(task_2_time, rnorm(1, mean=620, sd=60))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=620, sd=60))
   } else {
-    task_2_time <- c(task_2_time, NaN)
+    task_2_time <<- c(task_2_time, NaN)
   }
-  
+
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.93, .07))
-  task_3_valid <- c(task_3_valid, task_3_valid_)
+  task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <- c(task_3_time, rnorm(1, mean=320, sd=40))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=320, sd=40))
   } else {
-    task_3_time <- c(task_3_time, NaN)
+    task_3_time <<- c(task_3_time, NaN)
   }
+
 }
 
+data_point_no_copilot_experienced <- function(){
+  task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.96,.04)))
+  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
+  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=124, sd=20))
 
-for (i in 1:count_normal_advanced_participants) {
-  skill_level <- c(skill_level, "adv")
-  used_copilot <- c(used_copilot, FALSE)
-  task_0_sub_0_valid <- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.96,.04)))
-  task_0_sub_1_valid <- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
-  task_0_sub_2_valid <- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
-  task_0_time <- c(task_0_time, rnorm(1, mean=124, sd=20))
-  
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.7, .3))
-  task_1_valid <- c(task_1_valid, task_1_valid_)
+  task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <- c(task_1_time, rnorm(1, mean=790, sd=56))
-    task_1_complexity <- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=790, sd=56))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
   } else {
-    task_1_time <- c(task_1_time, NaN)
-    task_1_complexity <- c(task_1_complexity, NaN)
+    task_1_time <<- c(task_1_time, NaN)
+    task_1_complexity <<- c(task_1_complexity, NaN)
   }
-  
+
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.94, .06))
-  task_2_valid <- c(task_2_valid, task_2_valid_)
+  task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <- c(task_2_time, rnorm(1, mean=597, sd=40))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=597, sd=40))
   } else {
-    task_2_time <- c(task_2_time, NaN)
+    task_2_time <<- c(task_2_time, NaN)
   }
-  
+
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
-  task_3_valid <- c(task_3_valid, task_3_valid_)
+  task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <- c(task_3_time, rnorm(1, mean=420, sd=42))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=420, sd=42))
   } else {
-    task_3_time <- c(task_3_time, NaN)
+    task_3_time <<- c(task_3_time, NaN)
   }
 }
 
-for (i in 1:count_normal_beginner_participants) {
-  skill_level <- c(skill_level, "beg")
-  used_copilot <- c(used_copilot, FALSE)
-  task_0_sub_0_valid <- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.94,.06)))
-  task_0_sub_1_valid <- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.92,.08)))
-  task_0_sub_2_valid <- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
-  task_0_time <- c(task_0_time, rnorm(1, mean=133, sd=17))
-  
+data_point_no_copilot_beginner <- function(){
+  task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.94,.06)))
+  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.92,.08)))
+  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=133, sd=17))
+
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.65, .35))
-  task_1_valid <- c(task_1_valid, task_1_valid_)
+  task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <- c(task_1_time, rnorm(1, mean=821, sd=95))
-    task_1_complexity <- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=821, sd=95))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
   } else {
-    task_1_time <- c(task_1_time, NaN)
-    task_1_complexity <- c(task_1_complexity, NaN)
+    task_1_time <<- c(task_1_time, NaN)
+    task_1_complexity <<- c(task_1_complexity, NaN)
   }
-  
+
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.91, .09))
-  task_2_valid <- c(task_2_valid, task_2_valid_)
+  task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <- c(task_2_time, rnorm(1, mean=510, sd=50))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=510, sd=50))
   } else {
-    task_2_time <- c(task_2_time, NaN)
+    task_2_time <<- c(task_2_time, NaN)
   }
-  
+
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
-  task_3_valid <- c(task_3_valid, task_3_valid_)
+  task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <- c(task_3_time, rnorm(1, mean=444, sd=44))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=444, sd=44))
   } else {
-    task_3_time <- c(task_3_time, NaN)
+    task_3_time <<- c(task_3_time, NaN)
+  }
+}
+
+
+
+#structuring for easier debugging
+for(i in 1:count_total_participants){
+  participants <- c(participants,new("Participant",
+                                     skill=programing_skills[i],
+                                     python_skill=python_skills[i],
+                                     counts_as_experienced=counts_as_experienced[i],
+                                     used_copilot=used_copilot[i]))
+}
+
+
+for (participant in participants) {
+  if (participant@used_copilot) {
+    if (participant@counts_as_experienced) {
+      data_point_copilot_experienced()
+    }
+    else{
+      data_point_copilot_beginner()
+    }
+  }
+  else{
+    if (participant@counts_as_experienced) {
+      data_point_no_copilot_experienced()
+    }
+    else{
+      data_point_no_copilot_beginner()
+    }
   }
 }
 
 data_frame = data.frame(
-  skill_level,
+  programing_skills,
+  python_skills,
+  counts_as_experienced,
   used_copilot,
-  
+
+
   task_0_sub_0_valid,
   task_0_sub_1_valid,
   task_0_sub_2_valid,
   task_0_time,
-  
+
   task_1_valid,
   task_1_time,
   task_1_complexity,
-  
+
   task_2_valid,
   task_2_time,
-  
+
   task_3_valid,
   task_3_time
 )
