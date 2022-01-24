@@ -20,7 +20,7 @@ count_total_participants = opt$n_samples
 
 
 is_experienced <- function(programming_skill_individual,python_skill_individual) {
-  return(programming_skill_individual > 5 ||  python_skill_individual >3)
+  return(programming_skill_individual > 4 ||  python_skill_individual >2)
 }
 
 max_years = 10
@@ -80,19 +80,24 @@ task_2_valid <- c()
 task_3_time <- c()
 task_3_valid <- c()
 
+lower_bound_task_0_time <- 71
+lower_bound_task_1_time <- 610
+lower_bound_task_2_time <- 590
+lower_bound_task_3_time <- 310
 
+lower_bound_task_1_complexity <-5
 
 data_point_copilot_experienced <- function(){
-  task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)
-  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.95,.05)))
-  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean=71, sd=12))
+  task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)#always valid
+  task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.95,.05)))#95% valid, 5% invalid
+  task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))#90% valid, 10% invalid
+  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time, sd=5))# 
 
-  task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.8, .2))
+  task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.8, .2))# task 1 80% valid, 20% invalid
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <<- c(task_1_time, rnorm(1, mean=610, sd=90))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=lower_bound_task_1_time, sd=90))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=lower_bound_task_1_complexity, sd=2))) #tbd
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -101,7 +106,7 @@ data_point_copilot_experienced <- function(){
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean=590, sd=50))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=lower_bound_task_2_time, sd=50))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -109,7 +114,7 @@ data_point_copilot_experienced <- function(){
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.94, .06))
   task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_3_valid_) {
-    task_3_time <<- c(task_3_time, rnorm(1, mean=310, sd=40))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=lower_bound_task_3_time, sd=40))
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
@@ -119,13 +124,13 @@ data_point_copilot_beginner <- function(){
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.93,.07)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.89,.11)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean=82, sd=15))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time+5, sd=10))
 
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.72, .28))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <<- c(task_1_time, rnorm(1, mean=700, sd=80))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=lower_bound_task_1_time*1.15, sd=80))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=lower_bound_task_1_complexity+1, sd=5))) #tbd
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -134,7 +139,7 @@ data_point_copilot_beginner <- function(){
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.91, .09))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean=620, sd=60))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=lower_bound_task_2_time+100, sd=60))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -142,7 +147,7 @@ data_point_copilot_beginner <- function(){
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.93, .07))
   task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <<- c(task_3_time, rnorm(1, mean=320, sd=40))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=lower_bound_task_3_time+50, sd=40))
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
@@ -153,13 +158,13 @@ data_point_no_copilot_experienced <- function(){
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.96,.04)))
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.93,.07)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean=124, sd=20))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time*1.1, sd=20))
 
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.7, .3))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <<- c(task_1_time, rnorm(1, mean=790, sd=56))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=lower_bound_task_1_time*1.4, sd=56))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=lower_bound_task_1_complexity, sd=5))) #tbd
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -168,7 +173,7 @@ data_point_no_copilot_experienced <- function(){
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.94, .06))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean=597, sd=40))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=lower_bound_task_2_time, sd=40))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -176,7 +181,7 @@ data_point_no_copilot_experienced <- function(){
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
   task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <<- c(task_3_time, rnorm(1, mean=420, sd=42))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=lower_bound_task_3_time*1.4, sd=42))
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
@@ -186,13 +191,13 @@ data_point_no_copilot_beginner <- function(){
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE,FALSE), 1, prob=c(.94,.06)))
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1,prob=c(.92,.08)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean=133, sd=17))
+  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time*1.6, sd=17))
 
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.65, .35))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <<- c(task_1_time, rnorm(1, mean=821, sd=95))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=71, sd=12))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean=lower_bound_task_1_time*1.2, sd=95))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean=lower_bound_task_1_complexity, sd=5))) #tbd
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -201,7 +206,7 @@ data_point_no_copilot_beginner <- function(){
   task_2_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.91, .09))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean=510, sd=50))
+    task_2_time <<- c(task_2_time, rnorm(1, mean=lower_bound_task_2_time, sd=50))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -209,7 +214,7 @@ data_point_no_copilot_beginner <- function(){
   task_3_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.95, .05))
   task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_2_valid_) {
-    task_3_time <<- c(task_3_time, rnorm(1, mean=444, sd=44))
+    task_3_time <<- c(task_3_time, rnorm(1, mean=lower_bound_task_3_time*1.5, sd=44))
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
