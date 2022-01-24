@@ -8,3 +8,6 @@ datageneration/plots/
 
 .RData
 .Rhistory
+
+
+datageneration/descriptive_output.csv
