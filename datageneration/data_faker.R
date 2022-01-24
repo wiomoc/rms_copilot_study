@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 library("optparse")
-library("sn")
 library("distr")
 library("plyr")
 
@@ -349,5 +348,5 @@ data_frame = data.frame(
   task_3_valid,
   task_3_time
 )
-write.csv(data_frame, "quant_data.csv")
+write.csv(data_frame, "data.csv")
 

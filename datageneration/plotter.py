@@ -27,7 +27,7 @@ def plot_overview():
 
 def plot_graphs():
 
-    df = pandas.read_csv("quant_data.csv")
+    df = pandas.read_csv("data.csv")
     grouped = df.groupby('used_copilot')
     used_copilot_df = grouped.get_group(True).groupby('counts_as_experienced')
     not_used_copilot_df = grouped.get_group(False).groupby('counts_as_experienced')
