@@ -38,8 +38,8 @@ used_ai_coding_aids <-c()
 
 #scale => larger = flatter, shape => moves peak
 programming_skill_generator<-Truncate(Weibull(scale=4,shape=2),lower=0,upper=max_years)
-programing_skills <- ceiling(programming_skill_generator@r(count_total_participants))
-python_skills <- c()
+experience_in_years <- ceiling(programming_skill_generator@r(count_total_participants))
+experience_in_python <- c()
 
 
 generators <- c()
@@ -60,18 +60,18 @@ get_python_exp <- function(programming_year){
 
 
 counts_as_experienced<- c()
-for (years in programing_skills) {
+for (years in experience_in_years) {
   python_year<- get_python_exp(years)
-  python_skills <-c(python_skills,python_year)
+  experience_in_python <- c(experience_in_python, python_year)
   is_experienced_individual <- is_experienced(years,python_year)
   counts_as_experienced <- c(counts_as_experienced, is_experienced_individual)
   if(is_experienced_individual){
     tried_github_copilot <- c(tried_github_copilot, experienced_tried_copilot_generator())
-    used_ai_coding_aids <- c(used_ai_coding_aids, experienced_tried_copilot_generator())
+    used_ai_coding_aids <- c(used_ai_coding_aids, experienced_used_ai_coding_aids_generator())
   }
   else{
     tried_github_copilot <- c(tried_github_copilot, beginner_tried_copilot_generator())
-    used_ai_coding_aids <- c(used_ai_coding_aids, beginner_tried_copilot_generator())
+    used_ai_coding_aids <- c(used_ai_coding_aids, beginner_used_ai_coding_aids_generator())
   }
 }
 
@@ -106,6 +106,36 @@ lower_bound_task_2_time <- 590
 lower_bound_task_3_time <- 310
 
 lower_bound_task_1_complexity <-5
+
+create_generator <- function(scale, shape) {
+  return(Truncate(Weibull(scale = scale, shape = shape), lower = 1, upper = 5))
+}
+
+
+suggestions_were_useful <- c()
+understand_written_code <- c()
+repetitive_tasks_were_tedious <- c()
+feel_comfortable_working_with_library <- c()
+
+suggestions_were_useful_c_e_generator <- create_generator(scale = 4.5, shape = 7)
+suggestions_were_useful_c_b_generator <- create_generator(scale = 4.2, shape = 7)
+suggestions_were_useful_nc_e_generator <- create_generator(scale = 3.8, shape = 7)
+suggestions_were_useful_nc_b_generator <- create_generator(scale = 4.0, shape = 7)
+
+understand_written_code_c_e_generator <- create_generator(scale = 4.5, shape = 8)
+understand_written_code_c_b_generator <- create_generator(scale = 3, shape = 6)
+understand_written_code_nc_e_generator <- create_generator(scale = 4.2, shape = 7)
+understand_written_code_nc_b_generator <- create_generator(scale = 3.5, shape = 6)
+
+repetitive_tasks_were_tedious_c_e_generator  <- create_generator(scale=4.5,shape=7)
+repetitive_tasks_were_tedious_c_b_generator  <- create_generator(scale=4.2,shape=7)
+repetitive_tasks_were_tedious_nc_e_generator <- create_generator(scale=3.8,shape=7)
+repetitive_tasks_were_tedious_nc_b_generator <- create_generator(scale=4.0,shape=7)
+
+feel_comfortable_working_with_library_c_e_generator  <- create_generator(scale=4.5,shape=7)
+feel_comfortable_working_with_library_c_b_generator  <- create_generator(scale=4.2,shape=7)
+feel_comfortable_working_with_library_nc_e_generator <- create_generator(scale=3.8,shape=7)
+feel_comfortable_working_with_library_nc_b_generator <- create_generator(scale=4.0,shape=7)
 
 
 
@@ -143,6 +173,11 @@ data_point_copilot_experienced <- function(){
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
+
+  suggestions_were_useful <<- c(suggestions_were_useful, suggestions_were_useful_c_e_generator@r(1))
+  understand_written_code <<- c(understand_written_code, understand_written_code_c_e_generator@r(1))
+  repetitive_tasks_were_tedious <<- c(repetitive_tasks_were_tedious, repetitive_tasks_were_tedious_c_e_generator@r(1))
+  feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_c_e_generator@r(1))
 }
 
 data_point_copilot_beginner <- function(){
@@ -177,6 +212,10 @@ data_point_copilot_beginner <- function(){
     task_3_time <<- c(task_3_time, NaN)
   }
 
+  suggestions_were_useful <<- c(suggestions_were_useful, suggestions_were_useful_c_b_generator@r(1))
+  understand_written_code <<- c(understand_written_code, understand_written_code_c_b_generator@r(1))
+  repetitive_tasks_were_tedious <<- c(repetitive_tasks_were_tedious, repetitive_tasks_were_tedious_c_b_generator@r(1))
+  feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_c_b_generator@r(1))
 }
 
 data_point_no_copilot_experienced <- function(){
@@ -210,6 +249,11 @@ data_point_no_copilot_experienced <- function(){
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
+
+  suggestions_were_useful <<- c(suggestions_were_useful, suggestions_were_useful_nc_e_generator@r(1))
+  understand_written_code <<- c(understand_written_code, understand_written_code_nc_e_generator@r(1))
+  repetitive_tasks_were_tedious <<- c(repetitive_tasks_were_tedious, repetitive_tasks_were_tedious_nc_e_generator@r(1))
+  feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_nc_e_generator@r(1))
 }
 
 data_point_no_copilot_beginner <- function(){
@@ -243,6 +287,11 @@ data_point_no_copilot_beginner <- function(){
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
+
+  suggestions_were_useful <<- c(suggestions_were_useful, suggestions_were_useful_nc_b_generator@r(1))
+  understand_written_code <<- c(understand_written_code, understand_written_code_nc_b_generator@r(1))
+  repetitive_tasks_were_tedious <<- c(repetitive_tasks_were_tedious, repetitive_tasks_were_tedious_nc_b_generator@r(1))
+  feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_nc_b_generator@r(1))
 }
 
 
@@ -250,8 +299,8 @@ data_point_no_copilot_beginner <- function(){
 #structuring for easier debugging
 for(i in 1:count_total_participants){
   participants <- c(participants,new("Participant",
-                                     skill=programing_skills[i],
-                                     python_skill=python_skills[i],
+                                     skill = experience_in_years[i],
+                                     python_skill = experience_in_python[i],
                                      counts_as_experienced=counts_as_experienced[i],
                                      used_copilot=used_copilot[i]))
 }
@@ -277,13 +326,17 @@ for (participant in participants) {
 }
 
 data_frame = data.frame(
-  programing_skills,
-  python_skills,
+  experience_in_years,
+  experience_in_python,
   counts_as_experienced,
   used_copilot,
 
   used_ai_coding_aids,
   tried_github_copilot,
+  suggestions_were_useful,
+  understand_written_code,
+  repetitive_tasks_were_tedious,
+  feel_comfortable_working_with_library,
 
   task_0_sub_0_valid,
   task_0_sub_1_valid,
