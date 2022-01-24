@@ -228,28 +228,33 @@ hist(copilot.df$experience_in_python, main=NULL, xlab = "Experience (years)", ce
 dev.off()
 
 
+get_counts <- function(df){
+  count1<-tabulate(df[copilot.df$used_copilot==TRUE], nbins=5)
+  count2<-tabulate(df[copilot.df$used_copilot==FALSE], nbins=5)
+  mat <- rbind(count1,count2)
+  colnames(mat) <- c(1:5)
+  rownames(mat) <- c("TRUE", "FALSE")
+  return(mat)
+}
+
 # Qualitative results
 
 png(file="./plots/qualitative/Qualitative_UsefulSuggestions.png", width=plot_width, height=plot_height)
-counts <- table(copilot.df$used_copilot, copilot.df$suggestions_were_useful)
 par(mar=margins)
-barplot(counts, names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = rownames(counts), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
+barplot(get_counts(copilot.df$suggestions_were_useful), names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot","With Copilot"), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
 dev.off()
 
 png(file="./plots/qualitative/Qualitative_UnderstandCode.png", width=plot_width, height=plot_height)
-counts <- table(copilot.df$used_copilot, copilot.df$understand_written_code)
 par(mar=margins)
-barplot(counts, names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = rownames(counts), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
+barplot(get_counts(copilot.df$understand_written_code), names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot","With Copilot"), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
 dev.off()
 
 png(file="./plots/qualitative/Qualitative_RepetitiveTasks.png", width=plot_width, height=plot_height)
-counts <- table(copilot.df$used_copilot, copilot.df$repetitive_tasks_were_tedious)
 par(mar=margins)
-barplot(counts, names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = rownames(counts), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
+barplot(get_counts(copilot.df$repetitive_tasks_were_tedious), names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot","With Copilot"), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
 dev.off()
 
 png(file="./plots/qualitative/Qualitative_ComfortableLibrary.png", width=plot_width, height=plot_height)
-counts <- table(copilot.df$used_copilot, copilot.df$feel_comfortable_working_with_library)
 par(mar=margins)
-barplot(counts, names.arg = levels(counts), xlab = "Rating", ylab = "Number of ratings", legend = rownames(counts), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
+barplot(get_counts(copilot.df$feel_comfortable_working_with_library), names.arg = c(1:5), xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot","With Copilot"), beside=TRUE, cex.axis=font_size, cex.lab=font_size, cex.names=font_size)
 dev.off()
