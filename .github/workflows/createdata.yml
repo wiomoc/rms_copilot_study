@@ -24,34 +24,20 @@ jobs:
          r-version: 4.1.2
  
      - uses: r-lib/actions/setup-pandoc@master
- 
-#      Query dependencies. Currently this is not needed.
-#      - name: Query dependencies
-#        run: |
-#          install.packages('remotes')
-#          install.packages('sessioninfo')
-#          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-#          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-#        shell: Rscript {0}
- 
-#      - name: Cache R packages
-#        uses: actions/cache@v1
-#        with:
-#          path: ${{ env.R_LIBS_USER }}
-#          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-#          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
- 
-     - name: Install dependencies
-       run: |
-        Rscript -e 'install.packages("optparse", repos="https://cloud.r-project.org")'
-        python -m pip install -r datageneration/requirements.txt
-       
+      
+     - name: Install Dependencies
+       shell: sh
+       run: | 
+          cd ./datageneration && ./install_requirements.sh
+    
      - name: Run Data Generation Script       
        shell: sh
        run: | 
-          cd ./datageneration && ./create_data.sh
+          cd ./datageneration && ./create_data.sh -s 9865412 -n 40
 
      - uses: actions/upload-artifact@v2
        with:
          name: data
-         path: ./datageneration/output_data.csv
+         path: |
+           ./datageneration/data.csv
+           ./datageneration/plots/

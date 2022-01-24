@@ -27,20 +27,20 @@ def plot_overview():
 
 def plot_graphs():
 
-    df = pandas.read_csv("output_data.csv")
+    df = pandas.read_csv("data.csv")
     grouped = df.groupby('used_copilot')
-    used_copilot_df = grouped.get_group(True)
-    not_used_copilot_df = grouped.get_group(False)
+    used_copilot_df = grouped.get_group(True).groupby('counts_as_experienced')
+    not_used_copilot_df = grouped.get_group(False).groupby('counts_as_experienced')
 
-    plot_dataframe(used_copilot_df, 'copilot')
-    plot_dataframe(not_used_copilot_df, 'no_copilot')
+    used_copilot_expierienced = used_copilot_df.get_group(True)
+    used_copilot_beginner = used_copilot_df.get_group(False)
+    not_used_copilot_expierienced = not_used_copilot_df.get_group(True)
+    not_used_copilot_beginner = not_used_copilot_df.get_group(False)
 
-    grouped = df.groupby('skill_level')
-    experienced = grouped.get_group('adv')
-    beginner = grouped.get_group('beg')
-
-    plot_dataframe(experienced, 'experienced')
-    plot_dataframe(beginner, 'beginner')
+    plot_dataframe(used_copilot_expierienced, 'copilot_experienced')
+    plot_dataframe(used_copilot_beginner, 'copilot_beginner')
+    plot_dataframe(not_used_copilot_expierienced, 'no_copilot_experienced')
+    plot_dataframe(not_used_copilot_beginner, 'no_copilot_beginner')
 
 
 def plot_dataframe(df: pandas.DataFrame, header: str):
@@ -56,22 +56,22 @@ def plot_dataframe(df: pandas.DataFrame, header: str):
         plt.clf()
 
     columns = ['suggestions_were_useful', 'understand_written_code',
-               'repetitive_tasks_were_not_tedious', 'feel_comfortable_working_with_library']
+               'repetitive_tasks_were_tedious', 'feel_comfortable_working_with_library']
 
     for col in columns:
-        df[col].plot(kind='box', title=header + '_' + col, ylim=(0, 5))
+        df[col].plot(kind='box', title=header + '_' + col, ylim=(1, 5))
         plt.savefig(os.path.join(".", "plots", header + '_' + col + '.png'))
         plt.clf()
 
     columns = ['tried_github_copilot', 'used_ai_coding_aids']
     for col in columns:
         column = df[col]
+        column = column.map({True: 0, False: 1, np.NaN: 2})
         axes = column.plot(kind='hist', title=header + "_" +
                            col, bins=max(column)+1, rwidth=0.7)
         ticks = [(patch._x0 + patch._x1)/2 for patch in axes.patches]
-        labels = ['No', 'Yes'] if max(column) == 1 else [
-            'No', 'Yes', 'Unknown']
-        plt.xticks(ticks=ticks, labels=labels)
+        labels = ['Yes', 'No',  'Unknown']
+        plt.xticks(ticks=ticks, labels=labels[:len(ticks)])
         plt.savefig(os.path.join(".", "plots", header + '_'+col + '.png'))
         plt.clf()
     pass
