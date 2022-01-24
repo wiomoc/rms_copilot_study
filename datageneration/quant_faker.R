@@ -25,9 +25,21 @@ is_experienced <- function(programming_skill_individual,python_skill_individual)
 
 max_years = 10
 
+
+experienced_tried_copilot_generator <- function(){return(sample(c(TRUE,FALSE), 1, prob=c(.10,.90)))}
+beginner_tried_copilot_generator    <- function(){return(sample(c(TRUE,FALSE), 1, prob=c(.5,.95)))}
+
+experienced_used_ai_coding_aids_generator <- function(){return(sample(c(TRUE,FALSE,NA), 1, prob=c(.30,.50,.20)))}
+beginner_used_ai_coding_aids_generator    <- function(){return(sample(c(TRUE,FALSE,NA), 1, prob=c(.05,.15,.80)))}
+
+
+tried_github_copilot <- c()
+used_ai_coding_aids <-c()
+
 #scale => larger = flatter, shape => moves peak
 programming_skill_generator<-Truncate(Weibull(scale=4,shape=2),lower=0,upper=max_years)
 programing_skills <- ceiling(programming_skill_generator@r(count_total_participants))
+python_skills <- c()
 
 
 generators <- c()
@@ -47,12 +59,20 @@ get_python_exp <- function(programming_year){
 }
 
 
-python_skills <- c()
 counts_as_experienced<- c()
 for (years in programing_skills) {
   python_year<- get_python_exp(years)
   python_skills <-c(python_skills,python_year)
-  counts_as_experienced <- c(counts_as_experienced, is_experienced(years,python_year))
+  is_experienced_individual <- is_experienced(years,python_year)
+  counts_as_experienced <- c(counts_as_experienced, is_experienced_individual)
+  if(is_experienced_individual){
+    tried_github_copilot <- c(tried_github_copilot, experienced_tried_copilot_generator())
+    used_ai_coding_aids <- c(used_ai_coding_aids, experienced_tried_copilot_generator())
+  }
+  else{
+    tried_github_copilot <- c(tried_github_copilot, beginner_tried_copilot_generator())
+    used_ai_coding_aids <- c(used_ai_coding_aids, beginner_tried_copilot_generator())
+  }
 }
 
 used_copilot <- logical(count_total_participants)#pre-allocate for performance
@@ -87,11 +107,16 @@ lower_bound_task_3_time <- 310
 
 lower_bound_task_1_complexity <-5
 
+
+
+
+
+
 data_point_copilot_experienced <- function(){
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)#always valid
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE,FALSE), 1, prob=c(.95,.05)))#95% valid, 5% invalid
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE,FALSE), 1, prob=c(.90,.10)))#90% valid, 10% invalid
-  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time, sd=5))# 
+  task_0_time <<- c(task_0_time, rnorm(1, mean=lower_bound_task_0_time, sd=5))#
 
   task_1_valid_ <- sample(c(TRUE,FALSE), 1, prob=c(.8, .2))# task 1 80% valid, 20% invalid
   task_1_valid <<- c(task_1_valid, task_1_valid_)
@@ -257,6 +282,8 @@ data_frame = data.frame(
   counts_as_experienced,
   used_copilot,
 
+  used_ai_coding_aids,
+  tried_github_copilot,
 
   task_0_sub_0_valid,
   task_0_sub_1_valid,
