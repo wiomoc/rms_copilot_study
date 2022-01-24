@@ -45,4 +45,5 @@ jobs:
          name: data
          path: |
            ./datageneration/data.csv
+           ./datageneration/descriptive_output.csv
            ./datageneration/plots/
