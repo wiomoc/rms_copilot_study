@@ -104,7 +104,7 @@ lower_bound_task_1_time <- 610
 lower_bound_task_2_time <- 590
 lower_bound_task_3_time <- 310
 
-lower_bound_task_1_complexity <- 5
+lower_bound_task_1_complexity <- 10
 
 create_generator <- function(scale, shape) {
   return(Truncate(Weibull(scale = scale, shape = shape), lower = 1, upper = 5))
@@ -223,7 +223,7 @@ data_point_no_copilot_experienced <- function() {
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
     task_1_time <<- c(task_1_time, rnorm(1, mean = lower_bound_task_1_time * 1.4, sd = 56))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity, sd = 5))) #tbd
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity, sd = 3)))
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -261,7 +261,7 @@ data_point_no_copilot_beginner <- function() {
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
     task_1_time <<- c(task_1_time, rnorm(1, mean = lower_bound_task_1_time * 1.2, sd = 95))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity, sd = 5))) #tbd
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity+5, sd = 4)))
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -320,18 +320,25 @@ for (participant in participants) {
   }
 }
 
+suggestions_were_useful <- round(suggestions_were_useful)
+understand_written_code <- round(understand_written_code)
+repetitive_tasks_were_tedious <- round(repetitive_tasks_were_tedious)
+feel_comfortable_working_with_library <- round(feel_comfortable_working_with_library)
+
+
 data_frame = data.frame(
   experience_in_years,
   experience_in_python,
   counts_as_experienced,
   used_copilot,
 
-  used_ai_coding_aids,
-  tried_github_copilot,
   suggestions_were_useful,
   understand_written_code,
   repetitive_tasks_were_tedious,
   feel_comfortable_working_with_library,
+
+  used_ai_coding_aids,
+  tried_github_copilot,
 
   task_0_sub_0_valid,
   task_0_sub_1_valid,
