@@ -220,12 +220,14 @@ dev.off()
 
 png(file = "./plots/quantitative/general/Experience_General.png", width = plot_width, height = plot_height)
 par(mar = margins)
-hist(copilot.df$experience_in_years, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
+foo <- hist(copilot.df$experience_in_years, main = NULL, xlab = "Experience (years)", col=plot_color, xaxt='n', breaks= max(copilot.df$experience_in_years))
+axis(side=1, at=foo$mids, labels=1:length(foo$mids), cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/general/Experience_Python.png", width = plot_width, height = plot_height)
 par(mar = margins)
-hist(copilot.df$experience_in_python, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
+foo2 <- hist(copilot.df$experience_in_python, main = NULL, xlab = "Experience (years)", col=plot_color, xaxt='n', breaks= max(copilot.df$experience_in_python))
+axis(side=1, at=foo2$mids, labels=1:length(foo2$mids), cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 
