@@ -43,12 +43,12 @@ experience_in_python <- c()
 
 generators <- c()
 for (i in 1:max_years) {
-  gen <- Truncate(Exp(rate = 0.25), lower = 0, i)
+  gen <- Truncate(Norm(mean = i*.9,sd=(i-.5)/3), lower = 0, i)
   generators <<- c(generators, gen)
 }
 
-get_python_exp <- function(programming_year) {
 
+get_python_exp <- function(programming_year) {
   python_skill <- 0
   if (programming_year > 0) {
     python_skill_generator <- generators[[programming_year]]
@@ -116,20 +116,20 @@ understand_written_code <- c()
 repetitive_tasks_were_tedious <- c()
 feel_comfortable_working_with_library <- c()
 
-suggestions_were_useful_c_e_generator <- create_generator(scale = 4.5, shape = 7)
-suggestions_were_useful_c_b_generator <- create_generator(scale = 4.2, shape = 7)
-suggestions_were_useful_nc_e_generator <- create_generator(scale = 3.8, shape = 7)
-suggestions_were_useful_nc_b_generator <- create_generator(scale = 4.0, shape = 7)
+suggestions_were_useful_c_e_generator <- create_generator(scale = 8, shape = 3)
+suggestions_were_useful_c_b_generator <- create_generator(scale = 8, shape = 3)
+suggestions_were_useful_nc_e_generator <- create_generator(scale = 3.0, shape = 5)
+suggestions_were_useful_nc_b_generator <- create_generator(scale = 3.5, shape = 5)
 
 understand_written_code_c_e_generator <- create_generator(scale = 4.5, shape = 8)
 understand_written_code_c_b_generator <- create_generator(scale = 3, shape = 6)
 understand_written_code_nc_e_generator <- create_generator(scale = 4.2, shape = 7)
 understand_written_code_nc_b_generator <- create_generator(scale = 3.5, shape = 6)
 
-repetitive_tasks_were_tedious_c_e_generator <- create_generator(scale = 4.5, shape = 7)
-repetitive_tasks_were_tedious_c_b_generator <- create_generator(scale = 4.2, shape = 7)
-repetitive_tasks_were_tedious_nc_e_generator <- create_generator(scale = 3.8, shape = 7)
-repetitive_tasks_were_tedious_nc_b_generator <- create_generator(scale = 4.0, shape = 7)
+repetitive_tasks_were_tedious_c_e_generator <- create_generator(scale = 4.5, shape = 5)
+repetitive_tasks_were_tedious_c_b_generator <- create_generator(scale = 4.2, shape = 5)
+repetitive_tasks_were_tedious_nc_e_generator <- create_generator(scale = 3.8, shape = 5)
+repetitive_tasks_were_tedious_nc_b_generator <- create_generator(scale = 4.0, shape = 5)
 
 feel_comfortable_working_with_library_c_e_generator <- create_generator(scale = 4.5, shape = 7)
 feel_comfortable_working_with_library_c_b_generator <- create_generator(scale = 4.2, shape = 7)
@@ -137,17 +137,24 @@ feel_comfortable_working_with_library_nc_e_generator <- create_generator(scale =
 feel_comfortable_working_with_library_nc_b_generator <- create_generator(scale = 4.0, shape = 7)
 
 
-data_point_copilot_experienced <- function() {
+get_skill_bonus_factor <- function(participant){
+  return(1.05 + (-0.05* min(participant@python_skill, 1) +  (-0.02* min(participant@skill, 1))))
+}
+
+
+data_point_copilot_experienced <- function(participant) {
+  python_time_factor = get_skill_bonus_factor(participant)
+
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE) #always valid
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE, FALSE), 1, prob = c(.95, .05))) #95% valid, 5% invalid
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE, FALSE), 1, prob = c(.90, .10))) #90% valid, 10% invalid
-  task_0_time <<- c(task_0_time, rnorm(1, mean = lower_bound_task_0_time, sd = 5)) #
+  task_0_time <<- c(task_0_time, rnorm(1, mean = lower_bound_task_0_time*python_time_factor, sd = 10)) #
 
   task_1_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.8, .2)) # task 1 80% valid, 20% invalid
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
     task_1_time <<- c(task_1_time, rnorm(1, mean = lower_bound_task_1_time, sd = 90))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity, sd = 2))) #tbd
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity*python_time_factor, sd = 2))) #tbd
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -156,7 +163,7 @@ data_point_copilot_experienced <- function() {
   task_2_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.95, .05))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean = lower_bound_task_2_time, sd = 50))
+    task_2_time <<- c(task_2_time, rnorm(1, mean = lower_bound_task_2_time*python_time_factor, sd = 50))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -164,7 +171,7 @@ data_point_copilot_experienced <- function() {
   task_3_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.94, .06))
   task_3_valid <<- c(task_3_valid, task_3_valid_)
   if (task_3_valid_) {
-    task_3_time <<- c(task_3_time, rnorm(1, mean = lower_bound_task_3_time, sd = 40))
+    task_3_time <<- c(task_3_time, rnorm(1, mean = lower_bound_task_3_time*python_time_factor, sd = 40))
   } else {
     task_3_time <<- c(task_3_time, NaN)
   }
@@ -175,17 +182,18 @@ data_point_copilot_experienced <- function() {
   feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_c_e_generator@r(1))
 }
 
-data_point_copilot_beginner <- function() {
+data_point_copilot_beginner <- function(participant) {
+  python_time_factor =  get_skill_bonus_factor(participant)
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, TRUE)
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE, FALSE), 1, prob = c(.93, .07)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE, FALSE), 1, prob = c(.89, .11)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean = lower_bound_task_0_time + 5, sd = 10))
+  task_0_time <<- c(task_0_time, rnorm(1, mean = (lower_bound_task_0_time + 5)*python_time_factor, sd = 12))
 
   task_1_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.72, .28))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
   if (task_1_valid_) {
-    task_1_time <<- c(task_1_time, rnorm(1, mean = lower_bound_task_1_time * 1.15, sd = 80))
-    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = lower_bound_task_1_complexity + 1, sd = 5))) #tbd
+    task_1_time <<- c(task_1_time, rnorm(1, mean = (lower_bound_task_1_time * 1.15)*python_time_factor, sd = 80))
+    task_1_complexity <<- c(task_1_complexity, floor(rnorm(1, mean = (lower_bound_task_1_complexity + 1)*python_time_factor, sd = 5)))
   } else {
     task_1_time <<- c(task_1_time, NaN)
     task_1_complexity <<- c(task_1_complexity, NaN)
@@ -194,7 +202,7 @@ data_point_copilot_beginner <- function() {
   task_2_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.91, .09))
   task_2_valid <<- c(task_2_valid, task_2_valid_)
   if (task_2_valid_) {
-    task_2_time <<- c(task_2_time, rnorm(1, mean = lower_bound_task_2_time + 100, sd = 60))
+    task_2_time <<- c(task_2_time, rnorm(1, mean = (lower_bound_task_2_time + 100)*python_time_factor, sd = 60))
   } else {
     task_2_time <<- c(task_2_time, NaN)
   }
@@ -213,11 +221,12 @@ data_point_copilot_beginner <- function() {
   feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_c_b_generator@r(1))
 }
 
-data_point_no_copilot_experienced <- function() {
+data_point_no_copilot_experienced <- function(participant) {
+  python_time_factor =  get_skill_bonus_factor(participant)
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE, FALSE), 1, prob = c(.96, .04)))
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE, FALSE), 1, prob = c(.93, .07)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE, FALSE), 1, prob = c(.93, .07)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean = lower_bound_task_0_time * 1.1, sd = 20))
+  task_0_time <<- c(task_0_time, rnorm(1, mean = (lower_bound_task_0_time * 1.1)*python_time_factor, sd = 20))
 
   task_1_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.7, .3))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
@@ -251,11 +260,12 @@ data_point_no_copilot_experienced <- function() {
   feel_comfortable_working_with_library <<- c(feel_comfortable_working_with_library, feel_comfortable_working_with_library_nc_e_generator@r(1))
 }
 
-data_point_no_copilot_beginner <- function() {
+data_point_no_copilot_beginner <- function(participant) {
+  python_time_factor =  get_skill_bonus_factor(participant)
   task_0_sub_0_valid <<- c(task_0_sub_0_valid, sample(c(TRUE, FALSE), 1, prob = c(.94, .06)))
   task_0_sub_1_valid <<- c(task_0_sub_1_valid, sample(c(TRUE, FALSE), 1, prob = c(.92, .08)))
   task_0_sub_2_valid <<- c(task_0_sub_2_valid, sample(c(TRUE, FALSE), 1, prob = c(.90, .10)))
-  task_0_time <<- c(task_0_time, rnorm(1, mean = lower_bound_task_0_time * 1.6, sd = 17))
+  task_0_time <<- c(task_0_time, rnorm(1, mean = (lower_bound_task_0_time * 1.6)*python_time_factor, sd = 17))
 
   task_1_valid_ <- sample(c(TRUE, FALSE), 1, prob = c(.65, .35))
   task_1_valid <<- c(task_1_valid, task_1_valid_)
@@ -304,18 +314,18 @@ for (i in 1:count_total_participants) {
 for (participant in participants) {
   if (participant@used_copilot) {
     if (participant@counts_as_experienced) {
-      data_point_copilot_experienced()
+      data_point_copilot_experienced(participant)
     }
     else {
-      data_point_copilot_beginner()
+      data_point_copilot_beginner(participant)
     }
   }
   else {
     if (participant@counts_as_experienced) {
-      data_point_no_copilot_experienced()
+      data_point_no_copilot_experienced(participant)
     }
     else {
-      data_point_no_copilot_beginner()
+      data_point_no_copilot_beginner(participant)
     }
   }
 }

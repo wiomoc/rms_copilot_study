@@ -33,7 +33,7 @@ jobs:
      - name: Run Data Generation Script       
        shell: sh
        run: | 
-          cd ./datageneration && ./create_data.sh -s 9865412 -n 40
+          cd ./datageneration && ./create_data.sh -s 846 -n 40
 
      - name: Run descriptive analyzer
        shell: sh
