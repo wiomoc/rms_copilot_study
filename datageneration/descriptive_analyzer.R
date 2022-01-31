@@ -2,6 +2,7 @@
 
 copilot.df <- read.csv("data.csv", stringsAsFactors = F)
 
+plot_color<- "grey"
 
 # Average times
 
@@ -133,22 +134,22 @@ dir.create("./plots/qualitative/")
 
 png(file = "./plots/quantitative/task0/Task0_Time.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_0_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_0_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 png(file = "./plots/quantitative/task0/Task0_Time_Beginners.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_0_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_0_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task0/Task0_Time_Advanced.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_0_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_0_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task0/Task0_Time_ByPythonExperience.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_0_time[copilot.df$used_copilot == FALSE]) ~ copilot.df$experience_in_python[copilot.df$used_copilot == FALSE], xlab = "Python experience (years)", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_0_time[copilot.df$used_copilot == FALSE]) ~ copilot.df$experience_in_python[copilot.df$used_copilot == FALSE], col=plot_color, xlab = "Python experience (years)", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 
@@ -157,22 +158,22 @@ dev.off()
 
 png(file = "./plots/quantitative/task1/Task1_Time.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_1_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_1_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 png(file = "./plots/quantitative/task1/Task1_Time_Beginners.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_1_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_1_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task1/Task1_Time_Advanced.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_1_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_1_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task1/Task1_Complexity.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_1_complexity) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Cognitive complexity", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_1_complexity) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Cognitive complexity", cex.axis = font_size, col=plot_color, cex.lab = font_size)
 dev.off()
 
 
@@ -181,17 +182,17 @@ dev.off()
 
 png(file = "./plots/quantitative/task2/Task2_Time.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_2_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_2_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 png(file = "./plots/quantitative/task2/Task2_Time_Beginners.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_2_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_2_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task2/Task2_Time_Advanced.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_2_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_2_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 
@@ -200,17 +201,17 @@ dev.off()
 
 png(file = "./plots/quantitative/task3/Task3_Time.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_3_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_3_time) ~ copilot.df$used_copilot, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 png(file = "./plots/quantitative/task3/Task3_Time_Beginners.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_3_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_3_time[copilot.df$counts_as_experienced == FALSE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == FALSE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 png(file = "./plots/quantitative/task3/Task3_Time_Advanced.png", width = plot_width, height = plot_height)
 par(mar = margins)
-boxplot(as.numeric(copilot.df$task_3_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
+boxplot(as.numeric(copilot.df$task_3_time[copilot.df$counts_as_experienced == TRUE]) ~ copilot.df$used_copilot[copilot.df$counts_as_experienced == TRUE], col=plot_color, xlab = "Used Copilot", ylab = "Completion time (s)", cex.axis = font_size, cex.lab = font_size)
 dev.off()
 
 
@@ -219,12 +220,12 @@ dev.off()
 
 png(file = "./plots/quantitative/general/Experience_General.png", width = plot_width, height = plot_height)
 par(mar = margins)
-hist(copilot.df$experience_in_years, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size)
+hist(copilot.df$experience_in_years, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 png(file = "./plots/quantitative/general/Experience_Python.png", width = plot_width, height = plot_height)
 par(mar = margins)
-hist(copilot.df$experience_in_python, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size)
+hist(copilot.df$experience_in_python, main = NULL, xlab = "Experience (years)", cex.axis = font_size, cex.lab = font_size, col=plot_color)
 dev.off()
 
 
@@ -241,7 +242,7 @@ get_counts <- function(df) {
 
 png(file = "./plots/qualitative/Qualitative_UsefulSuggestions.png", width = plot_width, height = plot_height)
 par(mar = margins)
-barplot(get_counts(copilot.df$suggestions_were_useful),
+barplot( get_counts(copilot.df$suggestions_were_useful),
         xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot", "With Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size)
 dev.off()
 
