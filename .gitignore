@@ -11,3 +11,5 @@ datageneration/plots*
 
 
 datageneration/descriptive_output.csv
+
+!**/copy.py
