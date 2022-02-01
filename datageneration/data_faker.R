@@ -120,13 +120,13 @@ repetitive_tasks_were_tedious <- c()
 feel_comfortable_working_with_library <- c()
 
 suggestions_were_useful_c_e_generator <- create_generator2(7)
-suggestions_were_useful_c_b_generator <- create_generator2(6)
-suggestions_were_useful_nc_e_generator <- create_generator2(5)
-suggestions_were_useful_nc_b_generator <- create_generator2(4)
+suggestions_were_useful_c_b_generator <- create_generator2(7)
+suggestions_were_useful_nc_e_generator <- create_generator2(3.8)
+suggestions_were_useful_nc_b_generator <- create_generator2(3.5)
 
-understand_written_code_c_e_generator <- create_generator(scale = 4.5, shape = 3)
-understand_written_code_c_b_generator <- create_generator(scale = 3, shape = 4)
-understand_written_code_nc_e_generator <- create_generator(scale = 4.2, shape = 3)
+understand_written_code_c_e_generator <- create_generator(scale = 3, shape = 2.2)
+understand_written_code_c_b_generator <- create_generator(scale = 2.8, shape = 2.2)
+understand_written_code_nc_e_generator <- create_generator(scale = 4.5, shape = 4)
 understand_written_code_nc_b_generator <- create_generator(scale = 3.5, shape = 4)
 
 repetitive_tasks_were_tedious_c_e_generator <- create_generator(scale = 4.5, shape = 5)
@@ -134,10 +134,10 @@ repetitive_tasks_were_tedious_c_b_generator <- create_generator(scale = 4.2, sha
 repetitive_tasks_were_tedious_nc_e_generator <- create_generator(scale = 4.5, shape = 5)
 repetitive_tasks_were_tedious_nc_b_generator <- create_generator(scale = 4.2, shape = 5)
 
-feel_comfortable_working_with_library_c_e_generator <- create_generator(scale = 3.0, shape = 2)
-feel_comfortable_working_with_library_c_b_generator <- create_generator(scale = 2.5, shape = 2)
-feel_comfortable_working_with_library_nc_e_generator <- create_generator(scale = 3.5, shape = 2)
-feel_comfortable_working_with_library_nc_b_generator <- create_generator(scale = 3.0, shape = 2)
+feel_comfortable_working_with_library_c_e_generator <- create_generator(scale = 3.0, shape = 2.5)
+feel_comfortable_working_with_library_c_b_generator <- create_generator(scale = 2.5, shape = 2.5)
+feel_comfortable_working_with_library_nc_e_generator <- create_generator(scale = 4, shape = 2.5)
+feel_comfortable_working_with_library_nc_b_generator <- create_generator(scale = 3.5, shape = 2.5)
 
 
 get_skill_bonus_factor <- function(participant){
