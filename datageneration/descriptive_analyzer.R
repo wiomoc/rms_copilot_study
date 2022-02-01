@@ -256,23 +256,23 @@ max_answer_count= max(get_counts(copilot.df$suggestions_were_useful),
 png(file = "./plots/qualitative/Qualitative_UsefulSuggestions.png", width = plot_width, height = plot_height)
 par(mar = margins)
 barplot(get_counts(copilot.df$suggestions_were_useful),
-        xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot", "With Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
+        xlab = "Rating", ylab = "Number of ratings", legend = c("With Copilot", "Without Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
 dev.off()
 
 png(file = "./plots/qualitative/Qualitative_UnderstandCode.png", width = plot_width, height = plot_height)
 par(mar = margins)
 barplot(get_counts(copilot.df$understand_written_code),
-        xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot", "With Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
+        xlab = "Rating", ylab = "Number of ratings", legend = c("With Copilot", "Without Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
 dev.off()
 
 png(file = "./plots/qualitative/Qualitative_RepetitiveTasks.png", width = plot_width, height = plot_height)
 par(mar = margins)
 barplot(get_counts(copilot.df$repetitive_tasks_were_tedious),
-        xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot", "With Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
+        xlab = "Rating", ylab = "Number of ratings", legend = c("With Copilot", "Without Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
 dev.off()
 
 png(file = "./plots/qualitative/Qualitative_ComfortableLibrary.png", width = plot_width, height = plot_height)
 par(mar = margins)
 barplot(get_counts(copilot.df$feel_comfortable_working_with_library),
-        xlab = "Rating", ylab = "Number of ratings", legend = c("Without Copilot", "With Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
+        xlab = "Rating", ylab = "Number of ratings", legend = c("With Copilot", "Without Copilot"), beside = TRUE, cex.axis = font_size, cex.lab = font_size, cex.names = font_size,ylim=c(0,max_answer_count))
 dev.off()
